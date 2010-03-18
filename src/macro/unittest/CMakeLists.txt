@@ -2,12 +2,15 @@ cmake_minimum_required (VERSION 2.8)
 project (macro_tests)
 
 set (SOURCE_FILES
+    ../ZoneListSerializer.h
+    ../ZoneListSerializer.cpp
+    ZoneListSerializerTest.cpp
     ../MacroCommandParser.h
     ../MacroCommandParser.cpp
+    MacroCommandParserTest.cpp
     ../../utilities/Error.h
     ../../utilities/Error.cpp
     GMockInclude.h
-    MacroCommandParserTest.cpp
 )
 
 add_executable(${PROJECT_NAME}

@@ -5,7 +5,11 @@
 #include "../MacroCommandParser.h"
 #include "Error.h"
 
-TEST(MacroCommandParserTest, parserThrowsErrorWhenGivenInvalidInputString)
+//Given:
+//When:
+//Then:
+
+TEST(MacroCommandParserTest, DISABLED_parserThrowsErrorWhenGivenInvalidInputString)
 {
     //Given: A macro command containing an invalid input
     std::string const macroCommand = "!@#$)!#@$";
@@ -16,7 +20,7 @@ TEST(MacroCommandParserTest, parserThrowsErrorWhenGivenInvalidInputString)
     ASSERT_THROW(parser.parse(macroCommand), Error);
 }
 
-TEST(MacroCommandParserTest, parserCanParseAValidSourceZoneList)
+TEST(MacroCommandParserTest, DISABLED_parserCanParseAValidSourceZoneList)
 {
     //Given: A macro command containing a valid source zone list
     std::string const macroCommand = "--source-zones=[1-3]";

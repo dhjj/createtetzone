@@ -3,6 +3,18 @@
 #include <string>
 #include "ADDGLBL.h"
 #include "../MacroCommandParser.h"
+#include "Error.h"
+
+TEST(MacroCommandParserTest, parserThrowsErrorWhenGivenInvalidInputString)
+{
+    //Given: A macro command containing an invalid input
+    std::string const macroCommand = "!@#$)!#@$";
+
+    //When: The parser is asked to parse
+    //Then: It throws an exception of type Error
+    MacroCommandParser parser;
+    ASSERT_THROW(parser.parse(macroCommand), Error);
+}
 
 TEST(MacroCommandParserTest, parserCanParseAValidSourceZoneList)
 {
@@ -20,3 +32,7 @@ TEST(MacroCommandParserTest, parserCanParseAValidSourceZoneList)
     expectedSourceZones.push_back(3);
     ASSERT_TRUE(expectedSourceZones == parser.getSourceZones());
 }
+
+//Given:
+//When:
+//Then:

@@ -1,12 +1,45 @@
 cmake_minimum_required (VERSION 2.8)
 project (createtetzone)
 
+set (BUILD_TESTS FALSE CACHE BOOL "Include unit tests in the build.")
+
 set (CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake;${CMAKE_MODULE_PATH}")
 
 find_package (Tecplot REQUIRED)
+include_directories ("${TECPLOT_INCLUDE_DIR}")
 
 find_package(VTK REQUIRED)
 include(${VTK_USE_FILE})
+
+set (Boost_USE_STATIC_LIBS TRUE)
+find_package(Boost REQUIRED COMPONENTS program_options)
+# Use boost to resolve the tr1 library. This buys us a couple of
+# things:
+# 1. TR1 on platforms that don'e have it (i.e. VS2005)
+# 2. A cross-platform include style (e.g. gcc uses non-standard
+#    #include <tr1/memory>)
+set (Boost_INCLUDE_DIRS
+    ${Boost_INCLUDE_DIRS}/boost/tr1/tr1
+    ${Boost_INCLUDE_DIRS}
+)
+include_directories(${Boost_INCLUDE_DIRS})
+
+if (BUILD_TESTS)
+    set (GTEST_ROOT $ENV{GTEST_ROOT} CACHE PATH "Google Test root directory.")
+    set (CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/../../../cmake;${CMAKE_MODULE_PATH}")
+    find_package (GTest REQUIRED)
+    find_package (GMock REQUIRED)
+    include_directories (${GTEST_INCLUDE_DIRS})
+    include_directories (${GMOCK_INCLUDE_DIRS})
+
+    if (MSVC80)
+        # Can't mix tr1::tuple from boost with gtest's own tr1::tuple
+        add_definitions (
+            -DGTEST_HAS_TR1_TUPLE=1
+            -DGTEST_USE_OWN_TR1_TUPLE=0
+        )
+    endif ()
+endif ()
 
 if (UNIX)
     set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Werror -fPIC")
@@ -27,18 +60,6 @@ if (WIN32)
       endif ()
 endif ()
 
-# Use boost to resolve the tr1 library. This buys us a couple of
-# things:
-# 1. TR1 on platforms that don'e have it (i.e. VS2005)
-# 2. A cross-platform include style (e.g. gcc uses non-standard
-#    #include <tr1/memory>)
-find_package(Boost REQUIRED)
-set (Boost_INCLUDE_DIRS
-    ${Boost_INCLUDE_DIRS}/boost/tr1/tr1
-    ${Boost_INCLUDE_DIRS}
-)
-include_directories(${Boost_INCLUDE_DIRS})
-
 include (src/CMakeLists.txt)
 include (src/gui/CMakeLists.txt)
 include (src/utilities/CMakeLists.txt)
@@ -56,12 +77,10 @@ target_link_libraries (${PROJECT_NAME}
     model-view
 )
 
-include_directories(
-    "${TECPLOT_INCLUDE_DIR}"
-)
-
 add_subdirectory (src/model-view)
-add_subdirectory (src/macro/unittest)
+if (BUILD_TESTS)
+    add_subdirectory (src/macro/unittest)
+endif ()
 
 if (MSVC)
     # Set up a default .user file that contains the debugging setup

@@ -1,19 +1,11 @@
 cmake_minimum_required (VERSION 2.8)
 project (createtetzone)
 
-include (src/CMakeLists.txt)
-include (src/gui/CMakeLists.txt)
-include (src/utilities/CMakeLists.txt)
+set (CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake;${CMAKE_MODULE_PATH}")
 
-add_subdirectory (src/model-view)
-
-set (CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
 find_package (Tecplot REQUIRED)
-message (STATUS "TECPLOT_INSTALL_DIR is ${TECPLOT_INSTALL_DIR}")
 
-set (VTK_DIR $ENV{VTK_DIR} CACHE PATH "The directory containing VTKConfig.cmake")
 find_package(VTK REQUIRED)
-message (STATUS "Using VTK via ${VTK_USE_FILE}")
 include(${VTK_USE_FILE})
 
 if (UNIX)
@@ -47,6 +39,11 @@ set (Boost_INCLUDE_DIRS
 )
 include_directories(${Boost_INCLUDE_DIRS})
 
+include (src/CMakeLists.txt)
+include (src/gui/CMakeLists.txt)
+include (src/utilities/CMakeLists.txt)
+include (src/macro/CMakeLists.txt)
+
 add_library (${PROJECT_NAME}
     SHARED
     ${HEADER_FILES}
@@ -62,6 +59,9 @@ target_link_libraries (${PROJECT_NAME}
 include_directories(
     "${TECPLOT_INCLUDE_DIR}"
 )
+
+add_subdirectory (src/model-view)
+add_subdirectory (src/macro/unittest)
 
 if (MSVC)
     # Set up a default .user file that contains the debugging setup

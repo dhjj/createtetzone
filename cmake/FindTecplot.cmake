@@ -39,3 +39,12 @@ else ()
         ${TECPLOT_TOOLBOX_LIB}
     )
 endif ()
+
+# User normally only cares about TECPLOT_INSTALL_DIR
+mark_as_advanced (
+    TECPLOT_INCLUDE_DIR
+    TECPLOT_LIBTEC_LIB
+    TECPLOT_LIBTEC_LIB_DEBUG
+    TECPLOT_TOOLBOX_LIB
+    TECPLOT_TOOLBOX_LIB_DEBUG
+)

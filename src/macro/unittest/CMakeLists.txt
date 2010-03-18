@@ -1,35 +1,32 @@
 cmake_minimum_required (VERSION 2.8)
-project (model-view_tests)
+project (macro_tests)
 
 set (HEADER_FILES
     GMockInclude.h
-    ../ZoneListModel.h
-    StateChangeEventMock.h
-    StateChangeNotifierMock.h
-    ../StateChangeListener.h
-    ListModelObserverMock.h
+    ../MacroCommandParser.h
 )
 
 set (SOURCE_FILES
-    ZoneListModelTest.cpp
-    ../ZoneListModel.cpp
-    ../StateChangeListener.cpp
+    MacroCommandParserTest.cpp
+    ../MacroCommandParser.cpp
 )
 
 set (GTEST_ROOT $ENV{GTEST_ROOT} CACHE PATH "Google Test root directory.")
-set (CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake;${CMAKE_MODULE_PATH}")
+set (CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/../../../cmake;${CMAKE_MODULE_PATH}")
 find_package (GTest REQUIRED)
 find_package (GMock REQUIRED)
+find_package (Boost REQUIRED COMPONENTS program_options)
 include_directories (${GTEST_INCLUDE_DIRS})
 include_directories (${GMOCK_INCLUDE_DIRS})
+include_directories (${Boost_INCLUDE_DIRS})
 
 add_definitions (
     # _TPTOOLBOX_DLLAPI needed because we're including toolbox headers
     # but not linking against tptoolbox lib
-    -D_TPTOOLBOX_DLLAPI
+#    -D_TPTOOLBOX_DLLAPI
     # AMTEC_INTERNAL_MAKELIBTEC needed because we're including TecUtil headers
     # but not linking against libtec
-    -DAMTEC_INTERNAL_MAKELIBTEC
+#    -DAMTEC_INTERNAL_MAKELIBTEC
 )
 
 if (MSVC80)
@@ -47,6 +44,7 @@ add_executable(${PROJECT_NAME}
 
 target_link_libraries(${PROJECT_NAME}
     ${GMOCK_BOTH_LIBRARIES}
+    ${Boost_LIBRARIES}
 )
 
 # Add a rule so that when this unittest builds, it also runs.

@@ -62,8 +62,7 @@ if (WIN32)
       endif ()
 endif ()
 
-set (CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
-message (STATUS "CMake module path is ${CMAKE_MODULE_PATH}")
+set (CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake;${CMAKE_MODULE_PATH}")
 find_package (Tecplot REQUIRED)
 
 add_library (${PROJECT_NAME}

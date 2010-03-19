@@ -23,6 +23,7 @@
  * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF
  * THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+#include <boost/scoped_ptr.hpp>
 #include "ADDGLBL.h"
 #include "Tetrahedralizer.h"
 #include "gui/ZoneSelectDialog.h"
@@ -64,7 +65,7 @@ EXPORTFROMADDON void STDCALL InitTecAddOn()
     TecUtilLockOff();
 }
 
-std::auto_ptr<Tetrahedralizer::ProgressListenerInterface> createProgressListener() 
+Tetrahedralizer::ProgressListenerInterface* createProgressListener() 
 {
     class NullProgressListener
         : public Tetrahedralizer::ProgressListenerInterface
@@ -88,7 +89,7 @@ Boolean_t STDCALL macroCommandCallback(char*  commandString,
         MacroCommandParser parser;
         parser.parse(commandString);
 
-        std::auto_ptr<Tetrahedralizer::ProgressListenerInterface> progressListener = createProgressListener();
+        boost::scoped_ptr<Tetrahedralizer::ProgressListenerInterface> progressListener(createProgressListener());
         Tetrahedralizer tetrahedralizer(*progressListener);
         tetrahedralizer.createTetrahedralZone(parser.getSourceZones());
         return true;

@@ -1,5 +1,5 @@
 #include "GMockInclude.h"
-#include "ZoneListModel.h"
+#include "../ZoneListModel.h"
 #include "StateChangeEventMock.h"
 #include "StateChangeNotifierMock.h"
 #include "ListModelObserverMock.h"
@@ -10,14 +10,18 @@ using namespace testing;
 /**
  * Some globals to satisfy the linker, since we're not linking against the engine or tptoolbox.
  */
+#if defined(_MSC_VER)
+# pragma warning (push)
+# pragma warning (disable : 4273) //inconsistent dll linkage
+#endif
 AddOn_pa AddOnID;
-LINKTOADDON void STDCALL TecUtilLockStart(AddOn_pa) {}
-LINKTOADDON void STDCALL TecUtilLockFinish(AddOn_pa) {}
+void STDCALL TecUtilLockStart(AddOn_pa) {}
+void STDCALL TecUtilLockFinish(AddOn_pa) {}
 namespace tecplot
 {
     namespace toolbox
     {
-        TPTOOLBOX_DLLAPI std::ostream& operator<<(std::ostream& outputStream,
+        std::ostream& operator<<(std::ostream& outputStream,
             const Set&    /*set*/)
         {
             return outputStream;
@@ -25,6 +29,9 @@ namespace tecplot
 
     }
 }
+#if defined(_MSC_VER)
+# pragma warning(pop)
+#endif
 
 class TecUtilDataSetMock
     : public TecUtilDataSetInterface

@@ -89,8 +89,11 @@ public:
                         algorithm.SetAbortExecute(true);
                 } break;
 
-                case(vtkCommand::StartEvent): m_listener->begin(); break;
-                case(vtkCommand::EndEvent): m_listener->end(); break;
+                case(vtkCommand::StartEvent):
+                    m_listener->begin(); break;
+
+                case(vtkCommand::EndEvent): 
+                    m_listener->end(); break;
 
                 default:
                     break;

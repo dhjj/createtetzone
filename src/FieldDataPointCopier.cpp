@@ -38,6 +38,7 @@ LgIndex_t FieldDataPointCopier::copyFieldData(LgIndex_t offset,
                                               EntIndex_t destZone,
                                               EntIndex_t var)
 {
+    Lock lockObject;
     INVARIANT(TecUtilZoneIsEnabled(m_sourceZone));
     REQUIRE(TecUtilZoneIsEnabled(destZone));
     REQUIRE(TecUtilVarIsEnabled(var));

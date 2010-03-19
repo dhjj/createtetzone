@@ -1,4 +1,4 @@
-#include "ListModelObserverInterface.h"
+#include "../ListModelObserverInterface.h"
 
 class ListModelObserverMock
     : public ListModelObserverInterface

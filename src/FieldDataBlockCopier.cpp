@@ -55,12 +55,12 @@ LgIndex_t FieldDataBlockCopier::copyFieldData(LgIndex_t offset,
                                               EntIndex_t destZone,
                                               EntIndex_t var)
 {
+    Lock lockObject;
     INVARIANT(TecUtilZoneIsEnabled(m_sourceZone));
     INVARIANT(TecUtilZoneIsEnabled(destZone));
     INVARIANT(TecUtilVarIsEnabled(var));
     REQUIRE(offset >= 1 && offset < TecUtilDataValueGetCountByRef(TecUtilDataValueGetWritableNativeRef(destZone, var)));
 
-    Lock lockObject;
     FieldData_pa destFieldData = TecUtilDataValueGetWritableNativeRef(destZone, var);
     FieldData_pa sourceFieldData = TecUtilDataValueGetReadableNLRef(m_sourceZone, var);
     LgIndex_t numSourceZonePoints = TecUtilDataValueGetCountByRef(sourceFieldData);

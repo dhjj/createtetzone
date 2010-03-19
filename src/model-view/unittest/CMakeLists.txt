@@ -16,6 +16,24 @@ set (SOURCE_FILES
     ../StateChangeListener.cpp
 )
 
+# Compiler definitions we need to add:
+# - _TPTOOLBOX_DLLAPI because we're including toolbox headers
+#   but not linking against tptoolbox lib
+# - AMTEC_INTERNAL_MAKELIBTEC needed because we're including TecUtil headers
+#   but not linking against libtec
+get_directory_property (
+    COMPILE_DEFINITIONS COMPILE_DEFINITIONS
+)
+list (APPEND
+    COMPILE_DEFINITIONS
+    _TPTOOLBOX_DLLAPI
+    AMTEC_INTERNAL_MAKELIBTEC
+)
+set_directory_properties (
+    PROPERTIES
+    COMPILE_DEFINITIONS "${COMPILE_DEFINITIONS}"
+)
+
 add_executable(${PROJECT_NAME}
     ${HEADER_FILES}
     ${SOURCE_FILES}

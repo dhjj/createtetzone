@@ -10,28 +10,20 @@ using namespace testing;
 /**
  * Some globals to satisfy the linker, since we're not linking against the engine or tptoolbox.
  */
-#if defined(_MSC_VER)
-# pragma warning (push)
-# pragma warning (disable : 4273) //inconsistent dll linkage
-#endif
 AddOn_pa AddOnID;
-void STDCALL TecUtilLockStart(AddOn_pa) {}
-void STDCALL TecUtilLockFinish(AddOn_pa) {}
+LINKTOADDON void STDCALL TecUtilLockStart(AddOn_pa) {}
+LINKTOADDON void STDCALL TecUtilLockFinish(AddOn_pa) {}
 namespace tecplot
 {
     namespace toolbox
     {
-        std::ostream& operator<<(std::ostream& outputStream,
+        TPTOOLBOX_DLLAPI std::ostream& operator<<(std::ostream& outputStream,
             const Set&    /*set*/)
         {
             return outputStream;
         }
-
     }
 }
-#if defined(_MSC_VER)
-# pragma warning(pop)
-#endif
 
 class TecUtilDataSetMock
     : public TecUtilDataSetInterface

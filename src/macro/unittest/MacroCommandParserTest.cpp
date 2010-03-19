@@ -9,7 +9,18 @@
 //When:
 //Then:
 
-TEST(MacroCommandParserTest, DISABLED_parserThrowsErrorWhenGivenInvalidInputString)
+TEST(MacroCommandParserTest, parserGivesCorrectSourceZonesCommandString)
+{
+    //Given: a MacroCommandParser
+    MacroCommandParser parser;
+
+    //When: asked for the source zones command string
+    //Then: it returns "source-zones"
+    std::string expectedCommand = "source-zones";
+    ASSERT_EQ(expectedCommand, parser.zoneCommandString());
+}
+
+TEST(MacroCommandParserTest, parserThrowsErrorWhenGivenInvalidInputString)
 {
     //Given: A macro command containing an invalid input
     std::string const macroCommand = "!@#$)!#@$";
@@ -20,10 +31,21 @@ TEST(MacroCommandParserTest, DISABLED_parserThrowsErrorWhenGivenInvalidInputStri
     ASSERT_THROW(parser.parse(macroCommand), Error);
 }
 
-TEST(MacroCommandParserTest, DISABLED_parserCanParseAValidSourceZoneList)
+TEST(MacroCommandParserTest, parserThrowsErrorWhenGivenEmptyInputString)
+{
+    //Given: A macro command containing an empty input
+    std::string const macroCommand;
+
+    //When: The parser is asked to parse
+    //Then: It throws an exception of type Error
+    MacroCommandParser parser;
+    ASSERT_THROW(parser.parse(macroCommand), Error);
+}
+
+TEST(MacroCommandParserTest, parserCanParseAValidSourceZoneList)
 {
     //Given: A macro command containing a valid source zone list
-    std::string const macroCommand = "--source-zones=[1-3]";
+    std::string const macroCommand = "--source-zones=1-3";
 
     //When: The parser is asked to parse and return the source zones
     MacroCommandParser parser;

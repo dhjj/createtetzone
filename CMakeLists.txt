@@ -75,6 +75,7 @@ target_link_libraries (${PROJECT_NAME}
     ${TECPLOT_LIBS}
     vtkGraphics
     model-view
+    ${Boost_LIBRARIES}
 )
 
 add_subdirectory (src/model-view)

@@ -8,6 +8,9 @@ set (SOURCE_FILES
     ../MacroCommandParser.h
     ../MacroCommandParser.cpp
     MacroCommandParserTest.cpp
+    ../MacroCommandGenerator.h
+    ../MacroCommandGenerator.cpp
+    MacroCommandGeneratorTest.cpp
     ../../utilities/Error.h
     ../../utilities/Error.cpp
     GMockInclude.h

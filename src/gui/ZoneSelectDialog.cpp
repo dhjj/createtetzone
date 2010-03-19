@@ -42,6 +42,7 @@
 #include "model-view/ListView.h"
 #include "model-view/ListSelectionModelInterface.h"
 #include "DialogDropper.h"
+#include "StatusLineUpdater.h"
 
 namespace tbx = tecplot::toolbox;
 
@@ -147,34 +148,6 @@ class OutputWindow
 
 };
 
-class ProgressListener
-    : public Tetrahedralizer::ProgressListenerInterface
-{
-public:
-    virtual void begin()
-    {
-        Lock lock;
-        TecUtilStatusStartPercentDone("Creating tetrahedral zone...",
-                                      true,  // show stop
-                                      true); // show progress
-    }
-
-    virtual void end()
-    {
-        Lock lock;
-        TecUtilStatusFinishPercentDone();
-    }
-
-    virtual bool update(int percentDone)
-    {
-        Lock lock;
-        TecUtilStatusCheckPercentDone(percentDone);
-
-        bool keepGoing = TecUtilInterruptCheck() == FALSE;
-        return keepGoing;
-    }
-};
-
 }
 
 Boolean_t STDCALL ZoneSelectDialog::okToLaunch(ArbParam_t)
@@ -225,7 +198,7 @@ void ZoneSelectDialog::compute_BTN_CB()
             for (IndexList_t::iterator index = selectedIndices.begin(); index != selectedIndices.end(); ++index)
                 sourceZones.push_back(impl->m_zoneModel->data(*index));
 
-            ProgressListener progressListener;
+            StatusLineUpdater progressListener;
             Tetrahedralizer tetrahedralizer(progressListener);
 
             tetrahedralizer.createTetrahedralZone(sourceZones);

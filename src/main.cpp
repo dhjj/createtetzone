@@ -23,8 +23,16 @@
  * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF
  * THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-#include "gui/ZoneSelectDialog.h"
 #include "ADDGLBL.h"
+#include "Tetrahedralizer.h"
+#include "gui/ZoneSelectDialog.h"
+#include "gui/StatusLineUpdater.h"
+#include "macro/MacroCommandParser.h"
+#include "Error.h"
+#include "Lock.h"
+
+Boolean_t STDCALL macroCommandCallback(char*  commandString,
+                                       char** errorMessageRaw);
 
 AddOn_pa AddOnID;
 
@@ -51,6 +59,58 @@ EXPORTFROMADDON void STDCALL InitTecAddOn()
                                                    ArbParam_t(0));
     }
 
+    TecUtilMacroAddCommandCallback(ADDON_NAME, macroCommandCallback);
+
     TecUtilLockOff();
 }
 
+std::auto_ptr<Tetrahedralizer::ProgressListenerInterface> createProgressListener() 
+{
+    class NullProgressListener
+        : public Tetrahedralizer::ProgressListenerInterface
+    {
+        virtual void begin() {}
+        virtual void end() {}
+        virtual bool update(int) { return true; }
+    };
+
+    if (TecUtilMacroIsBatchModeActive())
+        return new NullProgressListener;
+    else
+        return new StatusLineUpdater;
+}
+
+Boolean_t STDCALL macroCommandCallback(char*  commandString,
+                                       char** errorMessageRaw)
+{
+    try
+    {
+        MacroCommandParser parser;
+        parser.parse(commandString);
+
+        std::auto_ptr<Tetrahedralizer::ProgressListenerInterface> progressListener = createProgressListener();
+        Tetrahedralizer tetrahedralizer(*progressListener);
+        tetrahedralizer.createTetrahedralZone(parser.getSourceZones());
+        return true;
+    }
+    catch (Error const& e)
+    {
+        Lock lockStart;
+        *errorMessageRaw = TecUtilStringAlloc(static_cast<int>(strlen(ADDON_NAME) + strlen(e.what()) + 10),
+                                              NULL);
+        if (*errorMessageRaw != NULL)
+        {
+#if defined(_MSC_VER)
+# pragma warning (push)
+# pragma warning (disable : 4996) // 'sprintf': This function or variable may be unsafe. 
+#endif
+            sprintf(*errorMessageRaw, "%s error:\n%s",
+                    ADDON_NAME,
+                    e.what());
+#if defined(_MSC_VER)
+# pragma warning(pop)
+#endif
+        }
+        return false;
+    }
+}

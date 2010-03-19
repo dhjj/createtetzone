@@ -9,8 +9,36 @@
 # pragma warning(pop)
 #endif
 #include "Error.h"
+#include "ZoneListSerializer.h"
 
 namespace po = boost::program_options;
+
+struct MacroCommandParserImpl
+    : boost::noncopyable
+{
+    MacroCommandParserImpl();
+
+    void throwUsageError(boost::program_options::options_description const& description) const;
+    void validateOptions(boost::program_options::options_description const& description);
+    std::string zoneCommandString() const;
+
+    std::string const m_sourceZoneCommandString;
+    po::variables_map m_variablesMap;
+};
+
+MacroCommandParserImpl::MacroCommandParserImpl()
+: m_sourceZoneCommandString("source-zones")
+{
+}
+
+MacroCommandParser::MacroCommandParser()
+: m_impl(new MacroCommandParserImpl)
+{
+}
+
+MacroCommandParser::~MacroCommandParser()
+{
+}
 
 void MacroCommandParser::parse(std::string const& macroCommand)
 {
@@ -18,30 +46,46 @@ void MacroCommandParser::parse(std::string const& macroCommand)
 
     po::options_description description("Allowed options");
     description.add_options()
-        ("source-zones", po::value<int>(), "The list of zones to use as the source for the tetrahedralization");
+        ("source-zones", po::value<std::string>(), "The list of zones to use as the source for the tetrahedralization");
 
-    po::variables_map variablesMap;
     try
     {
-        po::store(po::command_line_parser(arguments).options(description).run(), variablesMap);
-        po::notify(variablesMap);
+        po::store(po::command_line_parser(arguments).options(description).run(), m_impl->m_variablesMap);
+        po::notify(m_impl->m_variablesMap);
     }
     catch (po::error const&)
     {
-        throwUsageError(description);
+        m_impl->throwUsageError(description);
     }
 
-    throwUsageError(description);
+    m_impl->validateOptions(description);
 }
 
 ZoneList_t MacroCommandParser::getSourceZones() const
 {
-    return ZoneList_t();
+    std::string const& commandString = m_impl->m_variablesMap[zoneCommandString()].as<std::string>();
+    return ZoneListSerializer().deserialize(commandString);
 }
 
-void MacroCommandParser::throwUsageError(po::options_description const& description)
+void MacroCommandParserImpl::throwUsageError(po::options_description const& description) const
 {
     std::ostringstream usageMessage;
     description.print(usageMessage);
     throw Error(usageMessage.str());
+}
+
+void MacroCommandParserImpl::validateOptions(po::options_description const& description)
+{
+    if (m_variablesMap.count(zoneCommandString()) == 0)
+        throwUsageError(description);
+}
+
+std::string MacroCommandParserImpl::zoneCommandString() const
+{
+    return m_sourceZoneCommandString;
+}
+
+std::string MacroCommandParser::zoneCommandString() const
+{
+    return m_impl->zoneCommandString();
 }

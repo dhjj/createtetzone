@@ -34,6 +34,7 @@
 #include "ZoneToVTKPolyDataSource.h"
 #include "Error.h"
 #include "VTKUnstructuredGridToTecplotZone.h"
+#include "macro/MacroCommandGenerator.h"
 
 namespace
 {
@@ -145,4 +146,24 @@ void Tetrahedralizer::createTetrahedralZone(ZoneList_t const& sourceZones) const
     }
 
     VTKUnstructuredGridToTecplotZone().sendVTKUnstructuredGridToTecplot(sourceZones, *delaunay3D->GetOutput());
+
+    recordMacroCommand(sourceZones);
+}
+
+void Tetrahedralizer::recordMacroCommand(ZoneList_t const& sourceZones) const
+{
+    Lock lockStart;
+
+    bool record   = TecUtilMacroIsRecordingActive() == TRUE;
+    bool journal  = TecUtilDataSetJournalIsValid() == TRUE;
+
+    if (record || journal)
+    {
+        std::string commandString = MacroCommandGenerator().generateCommand(sourceZones);
+        if (record)
+            TecUtilMacroRecordExtCommand(ADDON_NAME, commandString.c_str());
+
+        if (journal)
+            TecUtilDataSetAddJournalCommand(ADDON_NAME, commandString.c_str(), NULL); // NULL == Raw data
+    }
 }

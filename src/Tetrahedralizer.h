@@ -61,6 +61,7 @@ private:
     ProgressListenerInterface& m_listener;
 
     UNCOPYABLE_CLASS(Tetrahedralizer);
+    void recordMacroCommand(ZoneList_t const& sourceZones) const;
 };
 
 #endif // Tetrahedralizer_h__

@@ -21,7 +21,7 @@
 			Name="Release|@USERFILE_PLATFORM@"
 			>
 			<DebugSettings
-				Command="@USERFILE_COMMAND_DEBUG@"
+				Command="@USERFILE_DEBUG_COMMAND@"
 				WorkingDirectory=""
 				CommandArguments="-nostdaddons $(TargetPath)"
 				Attach="false"
@@ -33,7 +33,7 @@
 			Name="MinSizeRel|@USERFILE_PLATFORM@"
 			>
 			<DebugSettings
-				Command="@USERFILE_COMMAND_DEBUG@"
+				Command="@USERFILE_DEBUG_COMMAND@"
 				WorkingDirectory=""
 				CommandArguments="-nostdaddons $(TargetPath)"
 				Attach="false"
@@ -45,7 +45,7 @@
 			Name="RelWithDebInfo|@USERFILE_PLATFORM@"
 			>
 			<DebugSettings
-				Command="@USERFILE_COMMAND_DEBUG@"
+				Command="@USERFILE_DEBUG_COMMAND@"
 				WorkingDirectory=""
 				CommandArguments="-nostdaddons $(TargetPath)"
 				Attach="false"

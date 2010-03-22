@@ -12,7 +12,7 @@ find_package(VTK REQUIRED)
 include(${VTK_USE_FILE})
 
 set (Boost_USE_STATIC_LIBS TRUE)
-find_package(Boost REQUIRED COMPONENTS program_options serialization)
+find_package(Boost REQUIRED COMPONENTS program_options)
 # Use boost to resolve the tr1 library. This buys us a couple of
 # things:
 # 1. TR1 on platforms that don'e have it (i.e. VS2005)

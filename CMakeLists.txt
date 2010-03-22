@@ -8,6 +8,11 @@ set (CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake;${CMAKE_MODULE_PATH}")
 find_package (Tecplot REQUIRED)
 include_directories ("${TECPLOT_INCLUDE_DIR}")
 
+# Tecplot installer for some versions did not include some toolbox
+# headers, so we include a version of these in our source
+include_directories (src/missing-tecplot-headers)
+include_directories (src/missing-tecplot-headers/toolbox)
+
 find_package(VTK REQUIRED)
 include(${VTK_USE_FILE})
 

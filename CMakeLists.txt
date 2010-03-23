@@ -54,8 +54,8 @@ if (UNIX)
     endif ()
 endif ()
 
-# Set warning level to 4 (the highest) on Windows
 if (WIN32)
+      # Set warning level to 4 (the highest) on Windows
       set (CMAKE_CXX_WARNING_LEVEL 4)
       if (CMAKE_CXX_FLAGS MATCHES "/W[0-4]")
             string (REGEX REPLACE "/W[0-4]" "/W4"
@@ -63,6 +63,8 @@ if (WIN32)
       else ()
             set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /W4")
       endif ()
+      # Enable multi-process compilation
+      set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /MP")
 endif ()
 
 include (src/CMakeLists.txt)

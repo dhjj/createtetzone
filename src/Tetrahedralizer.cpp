@@ -148,7 +148,7 @@ void Tetrahedralizer::createTetrahedralZone(ZoneList_t const& sourceZones) const
                                 MessageBox_Information);
     }
 
-    VTKUnstructuredGridToTecplotZone().sendVTKUnstructuredGridToTecplot(sourceZones, *delaunay3D->GetOutput());
+    sendZoneToTecplot(sourceZones, *delaunay3D->GetOutput());
 
     recordMacroCommand(sourceZones);
 }
@@ -169,4 +169,23 @@ void Tetrahedralizer::recordMacroCommand(ZoneList_t const& sourceZones) const
         if (journal)
             TecUtilDataSetAddJournalCommand(ADDON_NAME, commandString.c_str(), NULL); // NULL == Raw data
     }
+}
+
+void Tetrahedralizer::sendZoneToTecplot(ZoneList_t const& sourceZones,
+                                        vtkUnstructuredGrid& unstructuredGrid) const
+{
+    SuspendDataSetMarking suspendMarking;
+    VTKUnstructuredGridToTecplotZone().sendVTKUnstructuredGridToTecplot(sourceZones, unstructuredGrid);
+}
+
+Tetrahedralizer::SuspendDataSetMarking::SuspendDataSetMarking()
+{
+    Lock lock;
+    TecUtilDataSetSuspendMarking(true);
+}
+
+Tetrahedralizer::SuspendDataSetMarking::~SuspendDataSetMarking()
+{
+    Lock lock;
+    TecUtilDataSetSuspendMarking(false);
 }

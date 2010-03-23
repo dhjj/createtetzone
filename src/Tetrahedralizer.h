@@ -5,7 +5,7 @@
  * modification, are permitted provided that the following conditions are met:
  *
  *   - Redistributions of source code must retain the above copyright notice, this list of
- *     conditions and the following disclaimer. 
+ *     conditions and the following disclaimer.
  *   - Redistributions in binary form must reproduce the above copyright notice, this list
  *     of conditions and the following disclaimer in the documentation and/or other
  *     materials provided with the distribution.
@@ -26,8 +26,10 @@
 #ifndef Tetrahedralizer_h__
 #define Tetrahedralizer_h__
 
-#include "toolbox/Uncopyable.h" // For UNCOPYABLE_CLASS macro
+#include "boost/noncopyable.hpp"
 #include "ADDGLBL.h" // For ZoneList_t typedef
+
+class vtkUnstructuredGrid;
 
 /*
  * Class to control the process of creating a tetrahedral zone from a given source zones.
@@ -36,6 +38,7 @@
  * in case of error.
  */
 class Tetrahedralizer
+    : public boost::noncopyable
 {
 public:
     /*
@@ -58,10 +61,18 @@ public:
     Tetrahedralizer(ProgressListenerInterface& listener);
 
 private:
-    ProgressListenerInterface& m_listener;
-
-    UNCOPYABLE_CLASS(Tetrahedralizer);
+    void sendZoneToTecplot(ZoneList_t const& sourceZones,
+                           vtkUnstructuredGrid& unstructuredGrid) const;
     void recordMacroCommand(ZoneList_t const& sourceZones) const;
+
+    class SuspendDataSetMarking
+    {
+    public:
+        SuspendDataSetMarking();
+        ~SuspendDataSetMarking();
+    };
+
+    ProgressListenerInterface& m_listener;
 };
 
 #endif // Tetrahedralizer_h__

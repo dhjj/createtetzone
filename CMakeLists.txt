@@ -47,7 +47,7 @@ if (BUILD_TESTS)
 endif ()
 
 if (UNIX)
-    set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Werror -fPIC")
+    set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -fPIC -fno-strict-aliasing")
     add_definitions(-DLINUX)
     if (CMAKE_SYSTEM_PROCESSOR STREQUAL "x86_64")
         add_definitions(-DLINUX64)

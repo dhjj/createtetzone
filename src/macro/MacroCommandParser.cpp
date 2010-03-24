@@ -5,7 +5,7 @@
  * modification, are permitted provided that the following conditions are met:
  *
  *   - Redistributions of source code must retain the above copyright notice, this list of
- *     conditions and the following disclaimer.
+ *     conditions and the following disclaimer. 
  *   - Redistributions in binary form must reproduce the above copyright notice, this list
  *     of conditions and the following disclaimer in the documentation and/or other
  *     materials provided with the distribution.
@@ -30,6 +30,7 @@
 # pragma warning (push, 1)
 #endif
 #include "boost/program_options.hpp"
+#include <boost/algorithm/string.hpp>
 #if defined(_MSC_VER)
 # pragma warning(pop)
 #endif
@@ -37,6 +38,7 @@
 #include "ZoneListSerializer.h"
 
 namespace po = boost::program_options;
+namespace ba = boost::algorithm;
 
 struct MacroCommandParserImpl
     : boost::noncopyable
@@ -67,7 +69,9 @@ MacroCommandParser::~MacroCommandParser()
 
 void MacroCommandParser::parse(std::string const& macroCommand)
 {
-    std::vector<std::string> arguments = boost::program_options::split_winmain(macroCommand);
+    typedef std::vector<std::string> TokenList_t;
+    TokenList_t arguments;
+    ba::split(arguments, macroCommand, ba::is_any_of(" "), ba::token_compress_on);
 
     po::options_description description("Allowed options");
     description.add_options()

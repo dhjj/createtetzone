@@ -56,6 +56,8 @@ public:
 
         // Return false to cancel the operation
         virtual bool update(int percentDone) = 0;
+
+        virtual ~ProgressListenerInterface() {}
     };
 
     Tetrahedralizer(ProgressListenerInterface& listener);

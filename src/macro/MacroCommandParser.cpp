@@ -5,7 +5,7 @@
  * modification, are permitted provided that the following conditions are met:
  *
  *   - Redistributions of source code must retain the above copyright notice, this list of
- *     conditions and the following disclaimer. 
+ *     conditions and the following disclaimer.
  *   - Redistributions in binary form must reproduce the above copyright notice, this list
  *     of conditions and the following disclaimer in the documentation and/or other
  *     materials provided with the distribution.
@@ -67,7 +67,7 @@ MacroCommandParser::~MacroCommandParser()
 
 void MacroCommandParser::parse(std::string const& macroCommand)
 {
-    std::vector<std::string> arguments = po::split_winmain(macroCommand);
+    std::vector<std::string> arguments = boost::program_options::split_winmain(macroCommand);
 
     po::options_description description("Allowed options");
     description.add_options()

@@ -84,7 +84,7 @@ public:
                 case(vtkCommand::ProgressEvent):
                 {
                     vtkAlgorithm& algorithm = dynamic_cast<vtkAlgorithm&>(*caller);
-                    bool keepGoing = m_listener->update(algorithm.GetProgress() * 100.0);
+                    bool keepGoing = m_listener->update(static_cast<int>(algorithm.GetProgress() * 100.0));
                     if (!keepGoing)
                         algorithm.SetAbortExecute(true);
                 } break;

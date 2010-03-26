@@ -192,9 +192,6 @@ void ZoneSelectDialog::compute_BTN_CB()
         else
         {
             ZoneList_t sourceZones;
-            //std::transform(selectedIndices.begin(), selectedIndices.end(),
-            //               std::back_inserter(sourceZones),
-            //               std::tr1::bind(&ZoneListModel::data, impl->m_zoneModel.get()));
             for (IndexList_t::iterator index = selectedIndices.begin(); index != selectedIndices.end(); ++index)
                 sourceZones.push_back(impl->m_zoneModel->data(*index));
 

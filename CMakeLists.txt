@@ -3,7 +3,7 @@ project (createtetzone)
 
 set (BUILD_TESTS FALSE CACHE BOOL "Include unit tests in the build.")
 
-set (CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake;${CMAKE_MODULE_PATH}")
+set (CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/modules;${CMAKE_MODULE_PATH}")
 
 find_package (Tecplot REQUIRED)
 include_directories ("${TECPLOT_INCLUDE_DIR}")
@@ -16,8 +16,10 @@ include_directories (src/missing-tecplot-headers/toolbox)
 find_package(VTK REQUIRED)
 include(${VTK_USE_FILE})
 
+set (Boost_ADDITIONAL_VERSIONS "1.44" "1.44.0")
 set (Boost_USE_STATIC_LIBS TRUE)
 find_package(Boost REQUIRED COMPONENTS program_options)
+
 # Use boost to resolve the tr1 library. This buys us a couple of
 # things:
 # 1. TR1 on platforms that don'e have it (i.e. VS2005)
@@ -79,7 +81,8 @@ add_library (${PROJECT_NAME}
 )
 
 target_link_libraries (${PROJECT_NAME}
-    ${TECPLOT_LIBS}
+    libtec
+    tptoolbox
     vtkGraphics
     model-view
     ${Boost_LIBRARIES}
@@ -95,22 +98,19 @@ if (MSVC)
     set (SYSTEM_NAME $ENV{USERDOMAIN})
     set (USER_NAME $ENV{USERNAME})
 
-    # Only do this if one doesn't already exist
     set (USER_FILE ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.vcproj.${SYSTEM_NAME}.${USER_NAME}.user)
-    if (NOT EXISTS "${USER_FILE}")
-        message (STATUS "Creating ${USER_FILE} with default debug settings")
-        # These are the configuration variables
-        if (CMAKE_GENERATOR MATCHES "Win64")
-            set (USERFILE_PLATFORM "x64")
-        else ()
-            set (USERFILE_PLATFORM "Win32")
-        endif ()
-        find_program (USERFILE_DEBUG_COMMAND tec360.exe
-                      HINTS "${TECPLOT_INSTALL_DIR}"
-                      PATH_SUFFIXES bin
-                      NO_DEFAULT_PATH)
-
-        set (USER_FILE ${PROJECT_NAME}.vcproj.${SYSTEM_NAME}.${USER_NAME}.user)
-        configure_file (cmake/User2005.in ${CMAKE_CURRENT_BINARY_DIR}/${USER_FILE})
+    message (STATUS "Creating ${USER_FILE} with default debug settings")
+    # These are the configuration variables
+    if (CMAKE_GENERATOR MATCHES "Win64")
+        set (USERFILE_PLATFORM "x64")
+    else ()
+        set (USERFILE_PLATFORM "Win32")
     endif ()
+    find_program (USERFILE_DEBUG_COMMAND tec360.exe
+        HINTS "${TECPLOT_INSTALL_DIR}"
+        PATH_SUFFIXES bin
+        NO_DEFAULT_PATH)
+
+    set (USER_FILE ${PROJECT_NAME}.vcproj.${SYSTEM_NAME}.${USER_NAME}.user)
+    configure_file (cmake/User2005.in ${CMAKE_CURRENT_BINARY_DIR}/${USER_FILE})
 endif ()

@@ -1,8 +1,37 @@
-set (TECPLOT_INSTALL_DIR $ENV{TEC_360_2009} CACHE PATH "Tecplot installation directory")
+# Find Tecplot
+# Finds the Tecplot libraries and include directory needed for an add-on.
+# The critical variable is TECPLOT_INSTALL_DIR. Once that is set, this
+# module will find with include directory and libraries within the
+# install directory.
+#
+# Typical usage:
+#   find_package (Tecplot REQUIRED)
+#   include_directories ("${TECPLOT_INCLUDE_DIR}")
+#   add_library (myaddon main.cpp)
+#   target_link_libraries (myaddon
+#       libtec
+#       tptoolbox
+#       )
 
-if (NOT EXISTS ${TECPLOT_INSTALL_DIR})
-    message (FATAL_ERROR "TECPLOT_INSTALL_DIR does not exist.")
-endif ()
+function (set_tecplot_install_dir)
+    set (TP_2009_HOME $ENV{TEC_360_2009})
+    if (TP_2009_HOME)
+        set (TECPLOT_INSTALL_DIR_TEMP $ENV{TEC_360_2009})
+    endif ()
+
+    set (TP_2010_HOME $ENV{TEC_360_2010})
+    if (TP_2010_HOME)
+        set (TECPLOT_INSTALL_DIR_TEMP $ENV{TEC_360_2010})
+    endif ()
+
+    if (EXISTS ${TECPLOT_INSTALL_DIR_TEMP})
+        set (TECPLOT_INSTALL_DIR ${TECPLOT_INSTALL_DIR_TEMP} CACHE PATH "Tecplot installation directory")
+    else ()
+        message (FATAL_ERROR "TECPLOT_INSTALL_DIR does not exist. Please set it to the location of the Tecplot installation directory.")
+    endif ()
+endfunction ()
+
+set_tecplot_install_dir ()
 
 # Detect if user changed Tecplot installation directories. If so, we need to
 # re-execute the searches for libraries and paths by re-setting the cache
@@ -38,7 +67,20 @@ find_library (TECPLOT_TOOLBOX_LIB "tptoolbox"
               PATH_SUFFIXES bin lib
               NO_DEFAULT_PATH)
 
+# Create an imported target for libtec and tptoolbox
+add_library (libtec UNKNOWN IMPORTED)
+add_library (tptoolbox UNKNOWN IMPORTED)
+set_target_properties (libtec
+    PROPERTIES
+    IMPORTED_LOCATION ${TECPLOT_LIBTEC_LIB}
+)
+set_target_properties (tptoolbox
+    PROPERTIES
+    IMPORTED_LOCATION ${TECPLOT_TOOLBOX_LIB}
+)
+
 if (WIN32)
+    # Find the debug libraries, if available
     find_library (TECPLOT_LIBTEC_LIB_DEBUG "libtec"
                   HINTS "${TECPLOT_INSTALL_DIR}"
                   PATH_SUFFIXES debug bin lib
@@ -47,17 +89,14 @@ if (WIN32)
                   HINTS "${TECPLOT_INSTALL_DIR}"
                   PATH_SUFFIXES bin lib
                   NO_DEFAULT_PATH)
-    set (TECPLOT_LIBS
-        debug ${TECPLOT_LIBTEC_LIB_DEBUG}
-        optimized ${TECPLOT_LIBTEC_LIB}
-        debug ${TECPLOT_TOOLBOX_LIB_DEBUG}
-        optimized ${TECPLOT_TOOLBOX_LIB}
-    )
-else ()
-    set (TECPLOT_LIBS
-        ${TECPLOT_LIBTEC_LIB}
-        ${TECPLOT_TOOLBOX_LIB}
-    )
+    set_target_properties (libtec
+        PROPERTIES
+        IMPORTED_LOCATION_DEBUG ${TECPLOT_LIBTEC_LIB_DEBUG}
+        )
+    set_target_properties (tptoolbox
+        PROPERTIES
+        IMPORTED_LOCATION_DEBUG ${TECPLOT_TOOLBOX_LIB_DEBUG}
+        )
 endif ()
 
 # User normally only cares about TECPLOT_INSTALL_DIR

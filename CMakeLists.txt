@@ -80,6 +80,12 @@ add_library (${PROJECT_NAME}
     ${SOURCE_FILES}
 )
 
+if (APPLE)
+    # Tecplot requires addons to have a .so filename extension,
+    # rather than the standard .dylib
+    set_target_properties (${PROJECT_NAME} PROPERTIES SUFFIX .so)
+endif ()
+
 target_link_libraries (${PROJECT_NAME}
     libtec
     tptoolbox

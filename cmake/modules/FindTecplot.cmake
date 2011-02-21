@@ -24,9 +24,9 @@ function (set_tecplot_install_dir)
         set (TECPLOT_INSTALL_DIR_TEMP $ENV{TEC_360_2010})
     endif ()
 
-    if (EXISTS ${TECPLOT_INSTALL_DIR_TEMP})
-        set (TECPLOT_INSTALL_DIR ${TECPLOT_INSTALL_DIR_TEMP} CACHE PATH "Tecplot installation directory")
-    else ()
+    set (TECPLOT_INSTALL_DIR ${TECPLOT_INSTALL_DIR_TEMP} CACHE PATH "Tecplot installation directory")
+
+    if (NOT EXISTS ${TECPLOT_INSTALL_DIR})
         message (FATAL_ERROR "TECPLOT_INSTALL_DIR does not exist. Please set it to the location of the Tecplot installation directory.")
     endif ()
 endfunction ()

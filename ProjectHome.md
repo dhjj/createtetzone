@@ -1,0 +1,1 @@
+This Tecplot add-on uses the VTK library's [Delaunay 3D filter](http://www.vtk.org/doc/nightly/html/classvtkDelaunay3D.html) to create a tetrahedral zone out of an arbitrary group of nodes. This is the 3D analog to Tecplot's existing 2D triangulation feature.
